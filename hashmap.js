@@ -149,6 +149,22 @@ class HashMap {
     return result;
   }
 
+  values() {
+    const result = [];
+    for (let i = 0; i < this.bucket.length; i++) {
+      if (this.bucket[i] && this.bucket[i].nodeHead) {
+        let currentNode = this.bucket[i].nodeHead;
+        while (currentNode !== null) {
+          if (currentNode.value !== null) {
+            result.push(currentNode.value[1]);
+          }
+          currentNode = currentNode.next;
+        }
+      }
+    }
+    return result;
+  }
+
   length() {
     return this.mapLength;
   }
