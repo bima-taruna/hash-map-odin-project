@@ -44,7 +44,19 @@ class HashMap {
     ).toFixed(2);
   }
 
-  get(key) {}
+  get(key) {
+    const hashedKey = this.hash(key) % this.bucketSize;
+    if (this.bucket[hashedKey]) {
+      let currentNode = this.bucket[hashedKey].nodeHead;
+      while (currentNode.value !== null) {
+        if (currentNode.value[0] === key) {
+          return currentNode.value[1];
+        }
+        currentNode = currentNode.next;
+      }
+    }
+    return null;
+  }
 
   entries() {
     return this.bucket;
