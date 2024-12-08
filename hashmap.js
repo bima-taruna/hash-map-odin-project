@@ -5,7 +5,6 @@ class HashMap {
     this.bucketSize = 16;
     this.bucket = new Array(this.bucketSize);
     this.loadFactor = (Math.round(0 * 100) / 100).toFixed(2);
-    this.capacity = this.bucket.length;
     this.mapLength = 0;
   }
 
@@ -126,6 +125,12 @@ class HashMap {
 
   entries() {
     return this.bucket;
+  }
+
+  clear() {
+    this.bucket = new Array(this.bucketSize);
+    this.mapLength = 0;
+    this.loadFactor = 0;
   }
 
   length() {
