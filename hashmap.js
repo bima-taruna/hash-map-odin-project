@@ -58,6 +58,20 @@ class HashMap {
     return null;
   }
 
+  has(key) {
+    const hashedKey = this.hash(key) % this.bucketSize;
+    if (this.bucket[hashedKey]) {
+      let currentNode = this.bucket[hashedKey].nodeHead;
+      while (currentNode.value !== null) {
+        if (currentNode.value[0] === key) {
+          return true;
+        }
+        currentNode = currentNode.next;
+      }
+    }
+    return false;
+  }
+
   entries() {
     return this.bucket;
   }
