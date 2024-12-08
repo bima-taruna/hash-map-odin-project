@@ -109,17 +109,33 @@ class LinkedList {
   }
 
   removeAt(index) {
+    if (this.length === 0 || index >= this.length || index < 0) {
+      return null;
+    }
+
     if (index === this.length - 1) {
       this.pop();
+      return;
     }
+
     if (index === 0) {
-      let newHead = this.nodeHead.next;
-      this.nodeHead = newHead;
-    } else {
-      const beforeNode = this.at(index - 1);
-      const targetNode = this.at(index);
-      beforeNode.next = targetNode.next;
+      this.nodeHead = this.nodeHead.next;
+      if (this.length === 1) {
+        this.nodeTail = null;
+      }
+      this.length--;
+      return;
     }
+
+    const beforeNode = this.at(index - 1);
+    const targetNode = beforeNode.next;
+
+    beforeNode.next = targetNode.next;
+
+    if (index === this.length - 2) {
+      this.nodeTail = beforeNode;
+    }
+
     this.length--;
   }
 
