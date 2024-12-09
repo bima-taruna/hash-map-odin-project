@@ -4,7 +4,7 @@ class HashMap {
   constructor() {
     this.bucketSize = 16;
     this.bucket = new Array(this.bucketSize);
-    this.loadFactor = (Math.round(0 * 100) / 100).toFixed(2);
+    this.loadFactor = 0;
     this.mapLength = 0;
   }
 
@@ -19,6 +19,9 @@ class HashMap {
   }
 
   set(key, value) {
+    if ((this.mapLength + 1) / this.bucketSize > 0.75) {
+      this.increaseCapacity();
+    }
     const hashedKey = this.hash(key) % this.bucketSize;
     if (hashedKey < 0 || hashedKey >= this.bucket.length) {
       throw new Error("Trying to access index out of bounds");
@@ -26,9 +29,7 @@ class HashMap {
     if (!this.bucket[hashedKey]) {
       this.bucket[hashedKey] = new LinkedList([key, value]);
       this.mapLength++;
-      this.loadFactor = (
-        Math.round((this.mapLength / this.bucketSize) * 100) / 100
-      ).toFixed(2);
+      this.loadFactor = this.mapLength / this.bucketSize;
       return;
     }
     let currentNode = this.bucket[hashedKey].nodeHead;
@@ -41,9 +42,7 @@ class HashMap {
     }
     this.bucket[hashedKey].append([key, value]);
     this.mapLength++;
-    this.loadFactor = (
-      Math.round((this.mapLength / this.bucketSize) * 100) / 100
-    ).toFixed(2);
+    this.loadFactor = this.mapLength / this.bucketSize;
   }
 
   get(key) {
@@ -96,9 +95,7 @@ class HashMap {
       }
 
       this.mapLength--;
-      this.loadFactor = (
-        Math.round((this.mapLength / this.bucketSize) * 100) / 100
-      ).toFixed(2);
+      this.loadFactor = this.mapLength / this.bucketSize;
       return true;
     }
 
@@ -111,9 +108,7 @@ class HashMap {
         }
 
         this.mapLength--;
-        this.loadFactor = (
-          Math.round((this.mapLength / this.bucketSize) * 100) / 100
-        ).toFixed(2);
+        this.loadFactor = this.mapLength / this.bucketSize;
         return true;
       }
       currentNode = currentNode.next;
@@ -124,7 +119,19 @@ class HashMap {
   }
 
   entries() {
-    return this.bucket;
+    const values = [];
+    for (let i = 0; i < this.bucket.length; i++) {
+      if (this.bucket[i] && this.bucket[i].nodeHead) {
+        let currentNode = this.bucket[i].nodeHead;
+        while (currentNode !== null) {
+          if (currentNode.value !== null) {
+            values.push([currentNode.value[0], currentNode.value[1]]);
+          }
+          currentNode = currentNode.next;
+        }
+      }
+    }
+    return values;
   }
 
   clear() {
@@ -177,7 +184,14 @@ class HashMap {
     return this.bucket[index];
   }
 
-  increaseCapacity() {}
+  increaseCapacity() {
+    const entries = this.entries();
+    this.bucketSize *= 2;
+    this.clear();
+    for (const [key, value] of entries) {
+      this.set(key, value);
+    }
+  }
 }
 
 export default HashMap;
